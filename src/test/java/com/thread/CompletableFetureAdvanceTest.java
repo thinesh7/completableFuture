@@ -12,17 +12,20 @@ class CompletableFetureAdvanceTest {
 	private List<Employee> getAllUsers() throws InterruptedException {
 		List<Employee> employees = new ArrayList<>();
 
+		System.out.println("GetAllUsers :: STRAT");
 		for (int i = 0; i < 10; i++) {
 			int id = i;
 			id++;
 			if (i % 2 == 0) {
 				employees.add(new Employee(id, "Name " + id, true, true));
+				System.out.println("EVEN " +id);
 			} else {
 				employees.add(new Employee(id, "Name " + id, true, false));
 				Thread.sleep(5000);
+				System.out.println("ODD " +id);
 			}
-			
 		}
+		System.out.println("GetAllUsers :: END");
 		return employees;
 	}
 
@@ -38,19 +41,21 @@ class CompletableFetureAdvanceTest {
 		}).thenApplyAsync(employees -> {
 			System.out.println("Thread to filter New Joinee " + Thread.currentThread().getName());
 			return employees.stream().filter(emp -> {
-				System.out.println("Checking isNewJoinee "+ emp.getId() + " Thread Name: "+ Thread.currentThread().getName());
+				System.out.println(
+						"Checking isNewJoinee " + emp.getId() + " Thread Name: " + Thread.currentThread().getName());
 				return emp.isNewJoinee();
 			});
 		}).thenApplyAsync(employees -> {
 			System.out.println("Thread to filter course not completed " + Thread.currentThread().getName());
 			return employees.filter(emp -> {
-				System.out.println("Checking is Not Completed "+ emp.getId() + " Thread Name: "+ Thread.currentThread().getName());
+				System.out.println("Checking is Not Completed " + emp.getId() + " Thread Name: "
+						+ Thread.currentThread().getName());
 				return !emp.isCompleted();
 			});
 		}).thenAcceptAsync(employees -> {
 			System.out.println("Thread to Send SMS " + Thread.currentThread().getName());
 			employees.forEach(emp -> {
-				System.out.println("Sending SMS "+ emp.getId() + " Thread Name: "+ Thread.currentThread().getName());
+				System.out.println("Sending SMS " + emp.getId() + " Thread Name: " + Thread.currentThread().getName());
 				System.out.println(emp);
 			});
 		}).get();
@@ -65,9 +70,21 @@ class CompletableFetureAdvanceTest {
 
 		System.out.println("Time taken " + (endTime - startTime));
 	}
-	
+
 	/*
-	 *  Thread to filter New Joinee ForkJoinPool.commonPool-worker-3
+	 *  GetAllUsers :: STRAT
+		EVEN 1
+		ODD 2
+		EVEN 3
+		ODD 4
+		EVEN 5
+		ODD 6
+		EVEN 7
+		ODD 8
+		EVEN 9
+		ODD 10
+		GetAllUsers :: END
+		Thread to filter New Joinee ForkJoinPool.commonPool-worker-3
 		Thread to filter course not completed ForkJoinPool.commonPool-worker-3
 		Thread to Send SMS ForkJoinPool.commonPool-worker-3
 		
@@ -111,13 +128,24 @@ class CompletableFetureAdvanceTest {
 		Sending SMS 10 Thread Name: ForkJoinPool.commonPool-worker-3
 		Employee(id=10, name=Name 10, newJoinee=true, isCompleted=false)
 		
-		Time taken 10117
+		Time taken 25044
 	 */
 	
-	
-	
-	/* ASYNC:
-	 *  Thread to filter New Joinee ForkJoinPool.commonPool-worker-3
+ 
+	/*   --> ASYNC <--
+	 *  GetAllUsers :: STRAT
+		EVEN 1
+		ODD 2
+		EVEN 3
+		ODD 4
+		EVEN 5
+		ODD 6
+		EVEN 7
+		ODD 8
+		EVEN 9
+		ODD 10
+		GetAllUsers :: END
+		Thread to filter New Joinee ForkJoinPool.commonPool-worker-3
 		Thread to filter course not completed ForkJoinPool.commonPool-worker-3
 		Thread to Send SMS ForkJoinPool.commonPool-worker-3
 		
@@ -161,54 +189,7 @@ class CompletableFetureAdvanceTest {
 		Sending SMS 10 Thread Name: ForkJoinPool.commonPool-worker-3
 		Employee(id=10, name=Name 10, newJoinee=true, isCompleted=false)
 		
-		Time taken 10087
-	 */
-	
-	/*
-	 *  Thread to filter New Joinee ForkJoinPool.commonPool-worker-3
-		Thread to filter course not completed ForkJoinPool.commonPool-worker-3
-		Thread to Send SMS ForkJoinPool.commonPool-worker-3
-		
-		Checking isNewJoinee 1 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 1 Thread Name: ForkJoinPool.commonPool-worker-3
-		
-		Checking isNewJoinee 2 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 2 Thread Name: ForkJoinPool.commonPool-worker-3
-		Sending SMS 2 Thread Name: ForkJoinPool.commonPool-worker-3
-		Employee(id=2, name=Name 2, newJoinee=true, isCompleted=false)
-		
-		Checking isNewJoinee 3 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 3 Thread Name: ForkJoinPool.commonPool-worker-3
-		
-		Checking isNewJoinee 4 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 4 Thread Name: ForkJoinPool.commonPool-worker-3
-		Sending SMS 4 Thread Name: ForkJoinPool.commonPool-worker-3
-		Employee(id=4, name=Name 4, newJoinee=true, isCompleted=false)
-		
-		Checking isNewJoinee 5 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 5 Thread Name: ForkJoinPool.commonPool-worker-3
-		
-		Checking isNewJoinee 6 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 6 Thread Name: ForkJoinPool.commonPool-worker-3
-		Sending SMS 6 Thread Name: ForkJoinPool.commonPool-worker-3
-		Employee(id=6, name=Name 6, newJoinee=true, isCompleted=false)
-		
-		Checking isNewJoinee 7 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 7 Thread Name: ForkJoinPool.commonPool-worker-3
-		
-		Checking isNewJoinee 8 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 8 Thread Name: ForkJoinPool.commonPool-worker-3
-		Sending SMS 8 Thread Name: ForkJoinPool.commonPool-worker-3
-		Employee(id=8, name=Name 8, newJoinee=true, isCompleted=false)
-		
-		Checking isNewJoinee 9 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 9 Thread Name: ForkJoinPool.commonPool-worker-3
-		
-		Checking isNewJoinee 10 Thread Name: ForkJoinPool.commonPool-worker-3
-		Checking is Not Completed 10 Thread Name: ForkJoinPool.commonPool-worker-3
-		Sending SMS 10 Thread Name: ForkJoinPool.commonPool-worker-3
-		Employee(id=10, name=Name 10, newJoinee=true, isCompleted=false)
-		Time taken 25039
+		Time taken 25063
 	 */
 
 }

@@ -5,13 +5,12 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
 
-public class CompletableFutureTest {
+class CompletableFutureTest {
 
 	@Test
-	public void completableFutureTest1() throws InterruptedException, ExecutionException {
+	void completableFutureTest1() throws InterruptedException, ExecutionException {
 
 		// runAsync Method: 1 and supplyAsync Method: 2
-
 		System.out.println("Thread Name : " + Thread.currentThread().getName()); // main
 
 		CompletableFuture<Void> runAsync1 = CompletableFuture.runAsync(() -> {
@@ -52,9 +51,7 @@ public class CompletableFutureTest {
 		});
 		
 		runAsync3.get();
-		
 		System.out.println("All Done ..! "+Thread.currentThread().getName());
-
 	}
 	
 	

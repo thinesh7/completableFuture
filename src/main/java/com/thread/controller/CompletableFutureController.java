@@ -57,6 +57,8 @@ public class CompletableFutureController {
 			System.out.println("Out..!");
 
 			CompletableFuture<?>[] comFtrArray = comFtrList.toArray(new CompletableFuture[] {});
+			
+			// Join all:
 			CompletableFuture.allOf(comFtrArray).join();
 			
 			long endTime = System.currentTimeMillis();
